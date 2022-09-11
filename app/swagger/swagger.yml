@@ -1,0 +1,274 @@
+openapi: 3.0.3
+servers:
+  - url: "/api/v1"
+info:
+  description: The backend magic, indeed.
+  version: 1.0.0
+  title: user management
+paths:
+  /change-password:
+    post:
+      tags:
+        - Auth
+      operationId: changePassword
+      requestBody:
+        $ref: "#/components/requestBodies/ChangePasswordRequestBody"
+      responses:
+        200:
+          description: success
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/VerifyResponse"
+        default:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+  /code:
+    post:
+      tags:
+        - Auth
+      operationId: getVerificationCode
+      requestBody:
+        $ref: "#/components/requestBodies/CodeRequestBody"
+      responses:
+        200:
+          description: success
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/VerifyResponse"
+        default:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+  /verify:
+    post:
+      tags:
+        - Auth
+      operationId: verify
+      requestBody:
+        $ref: "#/components/requestBodies/VerifyRequestBody"
+      responses:
+        200:
+          description: success
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/VerifyResponse"
+        default:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+  /signup:
+    post:
+      tags:
+        - Auth
+      operationId: signup
+      requestBody:
+        $ref: "#/components/requestBodies/SignupRequestBody"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        default:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+  /login:
+    post:
+      tags:
+        - Auth
+      operationId: login
+      requestBody:
+        $ref: "#/components/requestBodies/LoginRequestBody"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        default:
+          description: Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FailureResponse"
+
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  requestBodies:
+    ChangePasswordRequestBody:
+      description: Reset user password
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+              - password
+            properties:
+              password:
+                type: string
+              code:
+                type: number
+    CodeRequestBody:
+      description: User verification body
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+    VerifyRequestBody:
+      description: User verification body
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+            properties:
+              code:
+                type: number
+    LoginRequestBody:
+      description: Login request body
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - password
+            properties:
+              password:
+                type: string
+              email:
+                type: string
+              username:
+                type: string
+    SignupRequestBody:
+      description: Sign up request body
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - password
+              - username
+              - email
+            properties:
+              password:
+                type: string
+              email:
+                type: string
+              username:
+                type: string
+    AuthRequestBody:
+      description: Firebase user id
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userId
+            properties:
+              userId:
+                type: string
+    PdfRequestBody:
+      description: file to be extracted
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - file
+            properties:
+              # 'file' will be the field name in this multipart request
+              file:
+                type: string
+                format: binary
+
+    SignDocumentRequestBody:
+      description: file to be extracted
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - signature
+              - name
+              - number
+              - email
+              - job
+              - fitter
+              - jobNumber
+              - date
+              - address
+            properties:
+              # 'file' will be the field name in this multipart request
+              signature:
+                type: string
+              name:
+                type: string
+              number:
+                type: string
+              email:
+                type: string
+              job:
+                type: string
+              fitter:
+                type: string
+              jobNumber:
+                type: string
+              date:
+                type: string
+              address:
+                type: string
+
+  schemas:
+    FailureResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    ValidResponse:
+      type: object
+      properties:
+        text:
+          type: string
+        status:
+          type: number
+    AuthResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+    VerifyResponse:
+      type: string
