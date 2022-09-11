@@ -14,7 +14,7 @@
 
 What we used: 
 - [MongoDB](https://mongodb.com)
-- [NodeJS](https//nodejs.org)
+- [NodeJS](https://nodejs.org)
 
 ## Docs, Community
 
