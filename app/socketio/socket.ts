@@ -46,6 +46,29 @@ export const socketSetup = (server: import("http").Server) => {
     });
 
     socket.on("join_room", ({ roomName, user }) => {
+
+      if (!rooms[roomName]) {
+        socket.emit('no_room', "The provided room doesn't exists.")
+        return
+      }
+
+      socket.join(roomName);
+      socket.emit("joined_room", roomName);
+      let newRoom;
+      if (rooms[roomName]) {
+        const room = rooms[roomName];
+        room.addUser(user);
+        newRoom = room;
+      } else {
+        rooms[roomName] = new Room(roomName, user?.username);
+        newRoom = rooms[roomName];
+      }
+
+      socket.to(roomName).emit("room", newRoom);
+    });
+
+    socket.on("create_room", ({ roomName, user }) => {
+
       socket.join(roomName);
       socket.emit("joined_room", roomName);
       let newRoom;
